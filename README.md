@@ -126,3 +126,6 @@ To completely remove:
 ```powershell
 adb uninstall com.lunarstar.qpro5ghz
 ```
+
+
+## Thx Gemini <3
