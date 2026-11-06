@@ -1,99 +1,56 @@
-# Quest Pro Controller 5GHz Enforcer (`com.lunarstar.qpro5ghz`)
+# Quest Pro Controller 5GHz Enforcer
 
-An Xposed / Vector module for Meta Quest Pro (`seacliff`) that forces the controllers to maintain high-bandwidth **5 GHz Wi-Fi Direct** (80 MHz bandwidth, e.g. Channel 124 / 5620 MHz) at all times, preventing jitter and latency spikes caused by automatic 2.4 GHz demotion.
+An Xposed / Vector module for the Meta Quest Pro (`seacliff`) that stops the headset from demoting the Touch Pro controllers down to 2.4GHz Wi-Fi Direct.
 
----
+## Why this exists
 
-## 🎮 Background & Problem
+Meta's Connection Management Service (`CMSHeadset.apk`, `com.oculus.os.cm`) handles the Wi-Fi Direct link between the headset and the two Touch Pro controllers.
 
-Meta's Connection Management Service (`CMSHeadset.apk`, package `com.oculus.os.cm`, running under UID 1000) manages the Wi-Fi Direct P2P link between the headset and the two controllers.
+Whenever a game, Air Link, Virtual Desktop, or another app requests `WIFI_MODE_FULL_LOW_LATENCY`, `CMSHeadset` calls `switchLowLatencyBand()`. In RSDB mode, Meta hardcoded this "low-latency" mode to **2.4GHz Channel 11 (2462 MHz)**.
 
-When normal applications or games request `WIFI_MODE_FULL_LOW_LATENCY` (e.g., VR games, Air Link, Virtual Desktop, Parallax), `CMSHeadset` calls:
-`com.oculus.os.cm.P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()`
+This sends a Channel Switch Announcement (CSA) that kicks both controllers off 5GHz and drops them onto 2.4GHz Channel 11. In crowded Wi-Fi environments, this introduces packet drops, haptic delay, and tracking jitter.
 
-In RSDB (Real Simultaneous Dual Band) mode, Meta hardcodes low-latency controller mode to **2462 MHz (2.4 GHz Channel 11)** in:
-`P2pChannelManager.getChannelWhenLowLatency(int, int, String)`
+## What this module does
 
-This causes a P2P Channel Switch Announcement (`P2P_CSA_ATTEMPT`) that demotes both controllers from 5 GHz down to 2.4 GHz Channel 11, introducing jitter, packet drops, and higher tracking/haptic latency in congested 2.4 GHz environments.
+The module hooks `com.oculus.os.cm` via Vector (Xposed) and:
+1. Replaces `P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()` with a no-op so the channel switch to 2.4GHz is never sent.
+2. Hooks `isLowLatency()` to always report `false`.
+3. Hooks `P2pChannelManager.getChannelWhenLowLatency()` to always route to the normal 5GHz channel selector.
 
----
+The controllers remain on an 80MHz 5GHz Wi-Fi Direct channel (typically Channel 124 / 5620 MHz) even when low-latency mode is requested.
 
-## 🚀 Solution
+## Safety
 
-This module injects into `com.oculus.os.cm` in RAM using the **Vector** (Xposed) framework:
+- Does not touch `/persist`, `/vendor`, or `/system`.
+- Runs as an ordinary Android user-space app hooked in RAM.
+- Reversible at any time by disabling the module in Vector or uninstalling the APK.
 
-1. **Blocks CSA Switch to 2.4 GHz:**
-   Hooks `P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()` with `XC_MethodReplacement.DO_NOTHING`.
-2. **Overrides Low Latency State Flag:**
-   Hooks `P2PGroupLeader$WifiStateObserver.isLowLatency()` to always return `false`.
-3. **Redirects Channel Selection:**
-   Hooks `P2pChannelManager.getChannelWhenLowLatency(int, int, String)` to forward directly to `getChannelWhenNotLowLatency(..., false)`.
+## Installation
 
-### 🛡️ Safety & Reversibility
-- **Zero modification** to `/persist`, `/boot`, `/vendor`, or `/system` partitions.
-- Runs purely as an unprivileged user-space Android APK in RAM.
-- **100% reversible** at any time by toggling off the module in Vector or uninstalling the APK.
-
----
-
-## 📦 Project Structure
-
-```
-QuestPro-Controller-5GHz-Enforcer/
-├── app/
-│   ├── src/main/
-│   │   ├── AndroidManifest.xml                  # Xposed module declarations and scope
-│   │   ├── assets/xposed_init                   # Points to HookEntry
-│   │   ├── java/com/lunarstar/qpro5ghz/
-│   │   │   └── HookEntry.java                   # Hook logic
-│   │   └── res/values/
-│   │       ├── arrays.xml                       # xposedscope: com.oculus.os.cm
-│   │       └── strings.xml                      # App label & strings
-│   └── build.gradle
-├── xposed-stubs/                                # Local offline Xposed API stubs
-│   ├── src/main/java/de/robv/android/xposed/
-│   └── build.gradle
-├── QuestPro-Controller-5GHz-Enforcer.apk        # Pre-built APK
-├── gradlew / gradlew.bat                        # Gradle build wrapper
-├── build.gradle                                 # Root project build script
-├── settings.gradle                              # Project settings
-├── .gitignore
-└── README.md
-```
-
----
-
-## 🛠️ Installation & Setup
-
-1. **Install the APK:**
-   ```powershell
+1. Install the APK:
+   ```bash
    adb install -r QuestPro-Controller-5GHz-Enforcer.apk
    ```
-
-2. **Add Vector / LSPosed Scope:**
-   ```powershell
+2. Add scope in Vector / LSPosed:
+   ```bash
    adb shell su -c "/data/adb/lspd/cli scope add com.lunarstar.qpro5ghz com.oculus.os.cm/0"
    ```
-
-3. **Enable the Module:**
-   ```powershell
+3. Enable module:
+   ```bash
    adb shell su -c "/data/adb/lspd/cli modules enable com.lunarstar.qpro5ghz"
    ```
-
-4. **Restart Connection Management Service:**
-   ```powershell
+4. Restart CMS to apply:
+   ```bash
    adb shell su -c "killall com.oculus.os.cm"
    ```
 
----
+## Verification
 
-## 🔍 Verification
-
-### Check Logcat:
-```powershell
+Check logcat:
+```bash
 adb logcat -d -s QPro5GHz:V
 ```
-Expected output:
+You should see:
 ```text
 QPro5GHz: Target process detected: com.oculus.os.cm (Connection Management Service)
 QPro5GHz: Successfully hooked P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()
@@ -102,30 +59,27 @@ QPro5GHz: Successfully hooked P2pChannelManager.getChannelWhenLowLatency()
 QPro5GHz: All 5GHz controller enforcer hooks successfully installed!
 ```
 
-### Check Wi-Fi Direct Frequency:
-```powershell
+Check Wi-Fi Direct frequency:
+```bash
 adb shell "dumpsys cm_wifi | grep -E '(mFrequency|mBandwidth|csaTargetChannel)'"
 ```
-Expected output:
+Expected:
 ```text
 mFrequency: 5620
 mBandwidth: 80
 csaTargetChannel: 124
 ```
 
----
+## Uninstalling
 
-## 🗑️ How to Uninstall / Revert
-
-To disable without uninstalling:
-```powershell
+Disable without removing:
+```bash
 adb shell su -c "/data/adb/lspd/cli modules disable com.lunarstar.qpro5ghz; killall com.oculus.os.cm"
 ```
 
-To completely remove:
-```powershell
+To remove completely:
+```bash
 adb uninstall com.lunarstar.qpro5ghz
 ```
-
 
 ## Thx Gemini <3
