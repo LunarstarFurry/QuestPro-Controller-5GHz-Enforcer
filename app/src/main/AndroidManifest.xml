@@ -8,7 +8,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Locks Touch Pro controller Wi-Fi Direct to 5GHz by preventing low-latency downgrade to 2.4GHz" />
+            android:value="Forces Quest Pro controllers to stay on 5GHz Wi-Fi Direct (blocks 2.4GHz downgrade)" />
         <meta-data
             android:name="xposedminversion"
             android:value="89" />

@@ -1,0 +1,45 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.lunarstar.qpro5ghz.app-mergeDebugResources-2:/values/values.xml",
+            "map": [
+                {
+                    "source": "D:\\UserData\\Documents\\VSC Github Repo\\QuestPro-Controller-5GHz-Enforcer\\app\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endColumns": "71",
+                        "endOffsets": "83"
+                    },
+                    "to": {
+                        "startLines": "5",
+                        "startColumns": "4",
+                        "startOffsets": "152",
+                        "endColumns": "71",
+                        "endOffsets": "219"
+                    }
+                },
+                {
+                    "source": "D:\\UserData\\Documents\\VSC Github Repo\\QuestPro-Controller-5GHz-Enforcer\\app\\src\\main\\res\\values\\arrays.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "3",
+                        "endColumns": "19",
+                        "endOffsets": "108"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "19",
+                        "endOffsets": "147"
+                    }
+                }
+            ]
+        }
+    ]
+}

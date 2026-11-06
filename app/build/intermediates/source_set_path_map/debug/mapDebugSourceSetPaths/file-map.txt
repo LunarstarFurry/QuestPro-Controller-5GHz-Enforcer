@@ -1,0 +1,7 @@
+com.lunarstar.qpro5ghz.app-pngs-0 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\build\generated\res\pngs\debug
+com.lunarstar.qpro5ghz.app-resValues-1 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\build\generated\res\resValues\debug
+com.lunarstar.qpro5ghz.app-packageDebugResources-2 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.lunarstar.qpro5ghz.app-packageDebugResources-3 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.lunarstar.qpro5ghz.app-debug-4 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.lunarstar.qpro5ghz.app-debug-5 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\src\debug\res
+com.lunarstar.qpro5ghz.app-main-6 D:\UserData\Documents\VSC Github Repo\QuestPro-Controller-5GHz-Enforcer\app\src\main\res

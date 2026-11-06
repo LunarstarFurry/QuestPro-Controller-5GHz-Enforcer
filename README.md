@@ -1,12 +1,12 @@
-# Quest Pro 5 GHz Controller Enforcer (`com.lunarstar.qpro5ghz`)
+# Quest Pro Controller 5GHz Enforcer (`com.lunarstar.qpro5ghz`)
 
-An Xposed / Vector module for Meta Quest Pro (`seacliff`) that forces the Touch Pro (*Starlet*) controllers to maintain high-bandwidth **5 GHz Wi-Fi Direct** (80 MHz bandwidth, e.g. Channel 124 / 5620 MHz) at all times.
+An Xposed / Vector module for Meta Quest Pro (`seacliff`) that forces the controllers to maintain high-bandwidth **5 GHz Wi-Fi Direct** (80 MHz bandwidth, e.g. Channel 124 / 5620 MHz) at all times, preventing jitter and latency spikes caused by automatic 2.4 GHz demotion.
 
 ---
 
-## Background & Problem
+## 🎮 Background & Problem
 
-Meta's Connection Management Service (`CMSHeadset.apk`, package `com.oculus.os.cm`, running under UID 1000) manages the Wi-Fi Direct P2P link between the headset and the two Touch Pro controllers.
+Meta's Connection Management Service (`CMSHeadset.apk`, package `com.oculus.os.cm`, running under UID 1000) manages the Wi-Fi Direct P2P link between the headset and the two controllers.
 
 When normal applications or games request `WIFI_MODE_FULL_LOW_LATENCY` (e.g., VR games, Air Link, Virtual Desktop, Parallax), `CMSHeadset` calls:
 `com.oculus.os.cm.P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()`
@@ -18,7 +18,7 @@ This causes a P2P Channel Switch Announcement (`P2P_CSA_ATTEMPT`) that demotes b
 
 ---
 
-## Solution
+## 🚀 Solution
 
 This module injects into `com.oculus.os.cm` in RAM using the **Vector** (Xposed) framework:
 
@@ -29,17 +29,17 @@ This module injects into `com.oculus.os.cm` in RAM using the **Vector** (Xposed)
 3. **Redirects Channel Selection:**
    Hooks `P2pChannelManager.getChannelWhenLowLatency(int, int, String)` to forward directly to `getChannelWhenNotLowLatency(..., false)`.
 
-### Safety & Reversibility
+### 🛡️ Safety & Reversibility
 - **Zero modification** to `/persist`, `/boot`, `/vendor`, or `/system` partitions.
 - Runs purely as an unprivileged user-space Android APK in RAM.
 - **100% reversible** at any time by toggling off the module in Vector or uninstalling the APK.
 
 ---
 
-## Project Structure
+## 📦 Project Structure
 
 ```
-QPro5GHzEnforcer/
+QuestPro-Controller-5GHz-Enforcer/
 ├── app/
 │   ├── src/main/
 │   │   ├── AndroidManifest.xml                  # Xposed module declarations and scope
@@ -48,37 +48,26 @@ QPro5GHzEnforcer/
 │   │   │   └── HookEntry.java                   # Hook logic
 │   │   └── res/values/
 │   │       ├── arrays.xml                       # xposedscope: com.oculus.os.cm
-│   │       └── strings.xml                      # Module name & description
+│   │       └── strings.xml                      # App label & strings
 │   └── build.gradle
-├── xposed-stubs/                                # Local offline Xposed API stubs (no remote maven needed)
+├── xposed-stubs/                                # Local offline Xposed API stubs
 │   ├── src/main/java/de/robv/android/xposed/
 │   └── build.gradle
+├── QuestPro-Controller-5GHz-Enforcer.apk        # Pre-built APK
 ├── gradlew / gradlew.bat                        # Gradle build wrapper
 ├── build.gradle                                 # Root project build script
-└── settings.gradle                              # Project settings
+├── settings.gradle                              # Project settings
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## Building from Source
-
-### Using Command Line:
-```powershell
-.\gradlew.bat :app:assembleDebug
-```
-The output APK will be generated at:
-`app\build\outputs\apk\debug\app-debug.apk`
-
-### Using Android Studio:
-Open this folder (`QPro5GHzEnforcer`) directly in Android Studio and run **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
-
----
-
-## Installation & Setup
+## 🛠️ Installation & Setup
 
 1. **Install the APK:**
    ```powershell
-   adb install -r app-debug.apk
+   adb install -r QuestPro-Controller-5GHz-Enforcer.apk
    ```
 
 2. **Add Vector / LSPosed Scope:**
@@ -98,7 +87,7 @@ Open this folder (`QPro5GHzEnforcer`) directly in Android Studio and run **Build
 
 ---
 
-## Verification
+## 🔍 Verification
 
 ### Check Logcat:
 ```powershell
@@ -126,7 +115,7 @@ csaTargetChannel: 124
 
 ---
 
-## How to Uninstall / Revert
+## 🗑️ How to Uninstall / Revert
 
 To disable without uninstalling:
 ```powershell
