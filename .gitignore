@@ -4,7 +4,8 @@
 /.idea/
 .DS_Store
 /build
-/captures
+/app/build
+/xposed-stubs/build
+captures/
 .externalNativeBuild
 .cxx
-local.properties

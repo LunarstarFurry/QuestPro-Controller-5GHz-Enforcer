@@ -1,7 +1,0 @@
-#Fri Nov 06 09:37:34 CST 2026
-base.1=D\:\\UserData\\Documents\\VSC Github Repo\\QuestPro-Controller-5GHz-Enforcer\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
-path.1=5/classes.dex
-base.0=D\:\\UserData\\Documents\\VSC Github Repo\\QuestPro-Controller-5GHz-Enforcer\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-renamed.1=classes2.dex
-renamed.0=classes.dex
-path.0=0/classes.dex
