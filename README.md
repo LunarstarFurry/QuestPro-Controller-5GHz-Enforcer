@@ -16,8 +16,9 @@ The module hooks `com.oculus.os.cm` via Vector (Xposed) and:
 1. Replaces `P2PGroupLeader$WifiStateObserver.switchLowLatencyBand()` with a no-op so the channel switch to 2.4GHz is never sent.
 2. Hooks `isLowLatency()` to always report `false`.
 3. Hooks `P2pChannelManager.getChannelWhenLowLatency()` to always route to the normal 5GHz channel selector.
+4. Hooks `P2pChannelManager.getChannelWhenNotLowLatency()` and `P2pChannelManager.getNewChannel()` so that even when the headset is on **6GHz Wi-Fi 6E**, 2.4GHz (`<= 14`) fallbacks are intercepted and forced onto a country-compliant 5GHz channel (e.g. Channel 149 / 5745 MHz or Channel 36 / 5180 MHz).
 
-The controllers remain on an 80MHz 5GHz Wi-Fi Direct channel (typically Channel 124 / 5620 MHz) even when low-latency mode is requested.
+The controllers remain on an 80MHz 5GHz Wi-Fi Direct channel (e.g. Channel 124 / 5620 MHz or Channel 149 / 5745 MHz) even when low-latency mode is requested or when connected to 6GHz Wi-Fi 6E.
 
 ## Safety
 
