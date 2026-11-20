@@ -1,6 +1,7 @@
 # Quest Pro Controller 5GHz Enforcer
 
 An Xposed / Vector module for the Meta Quest Pro (`seacliff`) that stops the headset from demoting the Touch Pro controllers down to 2.4GHz Wi-Fi Direct.
+Just a Quick Note that depends on ur firmware version, it may or may not increase ur Latency for VR Streaming, feel free to give it a go!
 
 ## Why this exists
 
